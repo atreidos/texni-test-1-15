@@ -1,6 +1,17 @@
 const taskInput = document.getElementById('taskInput');
 const addBtn = document.getElementById('addBtn');
 const taskList = document.getElementById('taskList');
+const messageEl = document.getElementById('message');
+
+function showMessage(text) {
+  messageEl.textContent = text;
+  messageEl.classList.add('is-visible');
+}
+
+function clearMessage() {
+  messageEl.textContent = '';
+  messageEl.classList.remove('is-visible');
+}
 
 function createTaskElement(text) {
   const li = document.createElement('li');
@@ -15,6 +26,7 @@ function createTaskElement(text) {
   const span = document.createElement('span');
   span.className = 'task-text';
   span.textContent = text;
+  span.title = text;
 
   checkbox.addEventListener('change', () => {
     span.classList.toggle('completed', checkbox.checked);
@@ -42,10 +54,15 @@ function createTaskElement(text) {
 
 function addTask() {
   const text = taskInput.value.trim();
-  if (!text) return;
+  if (!text) {
+    showMessage('список пуст, введите текст задачи');
+    taskInput.focus();
+    return;
+  }
 
   const taskEl = createTaskElement(text);
   taskList.appendChild(taskEl);
+  clearMessage();
 
   taskInput.value = '';
   taskInput.focus();
@@ -56,5 +73,11 @@ addBtn.addEventListener('click', addTask);
 taskInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     addTask();
+  }
+});
+
+taskInput.addEventListener('input', () => {
+  if (messageEl.classList.contains('is-visible')) {
+    clearMessage();
   }
 });
